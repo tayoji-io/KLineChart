@@ -1,3 +1,8 @@
+该 Fork 在主面板底部添加了永久显示的交易量柱状图。
+您如您希望使用标准的 KLineChart，请移步官方版 <https://github.com/klinecharts/KLineChart>
+
+----
+
 <div align="center">
   <a href="https://klinecharts.com">
     <img src="https://github.com/liihuu/KLineChart/assets/10508024/c55f301a-e0a2-422c-a9d5-fd960de68ba3"/>
@@ -47,7 +52,7 @@ English | <a href="https://github.com/liihuu/KLineChart/blob/main/README.zh-CN.m
 - 🛡 **Typescript development:** Provide complete type definition files.
 
 ## ⚡ Performance
-Similar to chart libraries for performance comparison. 
+Similar to chart libraries for performance comparison.
 + **Test Scenario:** 50000 pieces of data, 5 pane indicators, average 10 runs
 + **Device:** macOS Ventura, Apple M2 Pro, 16G
 + **Browser:** Chrome 114.0.5735.106
@@ -57,7 +62,7 @@ Comparison of time consumption from initialization to full rendering:
 
 | **klinecharts@9.4.0** | **night-vision@0.3.2** | **hqchart@1.1.12147** |
 | :---: | :---: | :---: |
-|  37ms  |  36ms | 241ms | 
+|  37ms  |  36ms | 241ms |
 
 
 ## 📦 Install

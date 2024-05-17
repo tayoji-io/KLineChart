@@ -17,7 +17,7 @@ import type VisibleData from '../common/VisibleData'
 import type BarSpace from '../common/BarSpace'
 import { type EventHandler } from '../common/SyntheticEvent'
 import { ActionType } from '../common/Action'
-import { CandleType, type CandleBarColor, type RectStyle, PolygonType } from '../common/Styles'
+import { CandleType, type CandleBarColor, type RectStyle, PolygonType, type IndicatorPolygonStyle } from '../common/Styles'
 
 import type ChartStore from '../store/ChartStore'
 
@@ -42,29 +42,59 @@ export default class CandleBarView extends ChildrenView {
 
   override drawImp (ctx: CanvasRenderingContext2D): void {
     const pane = this.getWidget().getPane()
+    const yAxis = pane.getAxisComponent()
     const isMain = pane.getId() === PaneIdConstants.CANDLE
     const chartStore = pane.getChart().getChartStore()
+
+    const visibleDataList = chartStore.getVisibleDataList()
+    const yAxisHeight =
+      yAxis.getParent().getYAxisWidget()?.getBounding().height ?? 0
+    const maxVolume = visibleDataList.reduce((accumulator, currentValue) => {
+      return Math.max(
+        currentValue.data?.volume ?? Number.MIN_VALUE,
+        accumulator
+      )
+    }, Number.MIN_VALUE)
+
     const candleBarOptions = this.getCandleBarOptions(chartStore)
+    const indicatorBarStyles = this.getIndicatorBarStyles(chartStore)
+
     if (candleBarOptions !== null) {
-      const yAxis = pane.getAxisComponent()
+      // const yAxis = pane.getAxisComponent()
       this.eachChildren((data: VisibleData, barSpace: BarSpace) => {
         const { data: kLineData, x } = data
         if (isValid(kLineData)) {
-          const { open, high, low, close } = kLineData
+          const { open, high, low, close, volume } = kLineData
           const { type, styles } = candleBarOptions
           const colors: string[] = []
+          const volumeColors: string[] = []
           if (close > open) {
             colors[0] = styles.upColor
             colors[1] = styles.upBorderColor
             colors[2] = styles.upWickColor
+
+            volumeColors[0] =
+              indicatorBarStyles !== null
+                ? indicatorBarStyles.upColor
+                : colors[0]
           } else if (close < open) {
             colors[0] = styles.downColor
             colors[1] = styles.downBorderColor
             colors[2] = styles.downWickColor
+
+            volumeColors[0] =
+              indicatorBarStyles !== null
+                ? indicatorBarStyles.downColor
+                : colors[0]
           } else {
             colors[0] = styles.noChangeColor
             colors[1] = styles.noChangeBorderColor
             colors[2] = styles.noChangeWickColor
+
+            volumeColors[0] =
+              indicatorBarStyles !== null
+                ? indicatorBarStyles.noChangeColor
+                : colors[0]
           }
           const openY = yAxis.convertToPixel(open)
           const closeY = yAxis.convertToPixel(close)
@@ -132,6 +162,27 @@ export default class CandleBarView extends ChildrenView {
               break
             }
           }
+
+          // 在底部显示交易量指标
+          if (isMain && volume !== undefined && volume !== null) {
+            const height = (yAxisHeight / 6) * (volume / maxVolume)
+            rects.push({
+              name: 'rect',
+              attrs: {
+                x: x - barSpace.halfGapBar + 0.5,
+                y: yAxisHeight - height,
+                width: barSpace.gapBar,
+                height
+              },
+              styles: {
+                style: PolygonType.Fill,
+                color: volumeColors[0],
+                borderSize: 1,
+                borderColor: volumeColors[0]
+              }
+            })
+          }
+
           rects.forEach(rect => {
             let handler: EventHandler | undefined
             if (isMain) {
@@ -152,6 +203,18 @@ export default class CandleBarView extends ChildrenView {
       type: candleStyles.type as Exclude<CandleType, CandleType.Area>,
       styles: candleStyles.bar
     }
+  }
+
+  /**
+   * 获取 Bar 类型指标的样式
+   * @author hungtcs
+   */
+  protected getIndicatorBarStyles (chartStore: ChartStore): Nullable<IndicatorPolygonStyle> {
+    const barStyles = chartStore.getStyles().indicator.bars[0]
+    if (barStyles !== null && barStyles !== undefined) {
+      return barStyles
+    }
+    return null
   }
 
   private _createSolidBar (x: number, priceY: number[], barSpace: BarSpace, colors: string[]): Array<FigureCreate<RectAttrs | RectAttrs[], Partial<RectStyle>>> {

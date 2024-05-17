@@ -1,3 +1,8 @@
+该 Fork 在主面板底部添加了永久显示的交易量柱状图。
+您如您希望使用标准的 KLineChart，请移步官方版 <https://github.com/klinecharts/KLineChart>
+
+---
+
 <div align="center">
   <a href="https://klinecharts.com">
     <img src="https://github.com/liihuu/KLineChart/assets/10508024/c55f301a-e0a2-422c-a9d5-fd960de68ba3"/>
@@ -54,7 +59,7 @@
 从初始化到完全渲染，耗时对比:
 | **klinecharts@9.4.0** | **night-vision@0.3.2** | **hqchart@1.1.12147** |
 | :---: | :---: | :---: |
-|  37ms  |  36ms | 241ms | 
+|  37ms  |  36ms | 241ms |
 
 ## 📦 安装
 ### 使用 npm

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/space-before-function-paren */
 /**
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,7 +41,7 @@ export default class CandleBarView extends ChildrenView {
     return false
   }
 
-  override drawImp (ctx: CanvasRenderingContext2D): void {
+  override drawImp(ctx: CanvasRenderingContext2D): void {
     const pane = this.getWidget().getPane()
     const yAxis = pane.getAxisComponent()
     const isMain = pane.getId() === PaneIdConstants.CANDLE
@@ -65,36 +66,40 @@ export default class CandleBarView extends ChildrenView {
         const { data: kLineData, x } = data
         if (isValid(kLineData)) {
           const { open, high, low, close, volume } = kLineData
+          let color = (kLineData as any).color
+          if (!(typeof color === 'string' && color.length > 0)) {
+            color = null
+          }
           const { type, styles } = candleBarOptions
           const colors: string[] = []
           const volumeColors: string[] = []
           if (close > open) {
-            colors[0] = styles.upColor
-            colors[1] = styles.upBorderColor
-            colors[2] = styles.upWickColor
+            colors[0] = color ?? styles.upColor
+            colors[1] = color ?? styles.upBorderColor
+            colors[2] = color ?? styles.upWickColor
 
             volumeColors[0] =
-              indicatorBarStyles !== null
+              color ?? (indicatorBarStyles !== null
                 ? indicatorBarStyles.upColor
-                : colors[0]
+                : colors[0])
           } else if (close < open) {
-            colors[0] = styles.downColor
-            colors[1] = styles.downBorderColor
-            colors[2] = styles.downWickColor
+            colors[0] = color ?? styles.downColor
+            colors[1] = color ?? styles.downBorderColor
+            colors[2] = color ?? styles.downWickColor
 
-            volumeColors[0] =
-              indicatorBarStyles !== null
+            volumeColors[0] = color ??
+              (indicatorBarStyles !== null
                 ? indicatorBarStyles.downColor
-                : colors[0]
+                : colors[0])
           } else {
-            colors[0] = styles.noChangeColor
-            colors[1] = styles.noChangeBorderColor
-            colors[2] = styles.noChangeWickColor
+            colors[0] = color ?? styles.noChangeColor
+            colors[1] = color ?? styles.noChangeBorderColor
+            colors[2] = color ?? styles.noChangeWickColor
 
             volumeColors[0] =
-              indicatorBarStyles !== null
+              (color ?? (indicatorBarStyles !== null
                 ? indicatorBarStyles.noChangeColor
-                : colors[0]
+                : colors[0]))
           }
           const openY = yAxis.convertToPixel(open)
           const closeY = yAxis.convertToPixel(close)
@@ -197,7 +202,7 @@ export default class CandleBarView extends ChildrenView {
     }
   }
 
-  protected getCandleBarOptions (chartStore: ChartStore): Nullable<CandleBarOptions> {
+  protected getCandleBarOptions(chartStore: ChartStore): Nullable<CandleBarOptions> {
     const candleStyles = chartStore.getStyles().candle
     return {
       type: candleStyles.type as Exclude<CandleType, CandleType.Area>,
@@ -209,7 +214,7 @@ export default class CandleBarView extends ChildrenView {
    * 获取 Bar 类型指标的样式
    * @author hungtcs
    */
-  protected getIndicatorBarStyles (chartStore: ChartStore): Nullable<IndicatorPolygonStyle> {
+  protected getIndicatorBarStyles(chartStore: ChartStore): Nullable<IndicatorPolygonStyle> {
     const barStyles = chartStore.getStyles().indicator.bars[0]
     if (barStyles !== null && barStyles !== undefined) {
       return barStyles
@@ -217,7 +222,7 @@ export default class CandleBarView extends ChildrenView {
     return null
   }
 
-  private _createSolidBar (x: number, priceY: number[], barSpace: BarSpace, colors: string[]): Array<FigureCreate<RectAttrs | RectAttrs[], Partial<RectStyle>>> {
+  private _createSolidBar(x: number, priceY: number[], barSpace: BarSpace, colors: string[]): Array<FigureCreate<RectAttrs | RectAttrs[], Partial<RectStyle>>> {
     return [
       {
         name: 'rect',
@@ -246,7 +251,7 @@ export default class CandleBarView extends ChildrenView {
     ]
   }
 
-  private _createStrokeBar (x: number, priceY: number[], barSpace: BarSpace, colors: string[]): Array<FigureCreate<RectAttrs | RectAttrs[], Partial<RectStyle>>> {
+  private _createStrokeBar(x: number, priceY: number[], barSpace: BarSpace, colors: string[]): Array<FigureCreate<RectAttrs | RectAttrs[], Partial<RectStyle>>> {
     return [
       {
         name: 'rect',

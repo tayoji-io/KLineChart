@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/space-before-function-paren */
 /**
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,7 +27,7 @@ interface Vol {
   ma3?: number
 }
 
-function getVolumeFigure (): IndicatorFigure<Vol> {
+function getVolumeFigure(): IndicatorFigure<Vol> {
   return {
     key: 'volume',
     title: 'VOLUME: ',
